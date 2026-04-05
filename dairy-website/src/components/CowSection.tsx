@@ -1,21 +1,21 @@
 import { Container, Typography, Grid, Box, Button } from "@mui/material";
-import React from "react";
 import LableComponent from "../common/LableComponent";
 import CardComponent from "../common/CardComponent";
-
 import Jersey from "../assets/Jersey.png";
 import Ayrshire from "../assets/Ayrshire.png";
 import Holstein from "../assets/Holstein.png";
 import Brown_Swiss from "../assets/Brown_Swiss.png";
+import { useNavigate } from "react-router-dom";
 
 const cards = [
-  { id: 1, name: "Jersey", image: Jersey },
-  { id: 2, name: "Ayrshire", image: Ayrshire },
-  { id: 3, name: "Holstein", image: Holstein },
-  { id: 4, name: "Brown Swiss", image: Brown_Swiss },
+  { id: 1, color: "red", name: "Jersey", image: Jersey },
+  { id: 2, color: "white", name: "Ayrshire", image: Ayrshire },
+  { id: 3, color: "green", name: "Holstein", image: Holstein },
+  { id: 4, color: "brown", name: "Brown Swiss", image: Brown_Swiss },
 ];
 
 const CowSection = () => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -30,7 +30,7 @@ const CowSection = () => {
         </Typography>
       </LableComponent>
       <Container maxWidth="md">
-        <Grid container maxWidth="md" spacing={2}>
+        <Grid container maxWidth="md" spacing={10} margin="auto">
           {cards.map((card) => (
             <CardComponent key={card.id} name={card.name} image={card.image}>
               <Typography textAlign="center" color="textPrimary">
@@ -44,7 +44,11 @@ const CowSection = () => {
         container
         sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 3 }}
       >
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/cow-filter")}
+        >
           View The Herd
         </Button>
       </Grid>
