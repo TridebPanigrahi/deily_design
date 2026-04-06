@@ -22,6 +22,7 @@ const CowSection = () => {
         backgroundColor: "#eae3d6",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        padding: 1,
       }}
     >
       <LableComponent primaryTypo={"Meet Our Cows"}>
@@ -29,17 +30,20 @@ const CowSection = () => {
           Happy, Healthy and grass-fed. Get to know our beloved cows
         </Typography>
       </LableComponent>
-      <Container maxWidth="md">
-        <Grid container maxWidth="md" spacing={10} margin="auto">
-          {cards.map((card) => (
-            <CardComponent key={card.id} name={card.name} image={card.image}>
-              <Typography textAlign="center" color="textPrimary">
-                {card.name}
-              </Typography>
-            </CardComponent>
-          ))}
-        </Grid>
-      </Container>
+      <Grid container maxWidth="md" spacing={10} margin="auto">
+        {cards.map((card) => (
+          <CardComponent
+            key={card.id}
+            name={card.name}
+            image={card.image}
+            action={false}
+          >
+            <Typography textAlign="center" color="textPrimary">
+              {card.name}
+            </Typography>
+          </CardComponent>
+        ))}
+      </Grid>
       <Grid
         container
         sx={{ display: "flex", justifyContent: "center", mt: 3, mb: 3 }}
