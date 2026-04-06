@@ -12,8 +12,9 @@ import Jersey from "../assets/Jersey.png";
 import Ayrshire from "../assets/Ayrshire.png";
 import Holstein from "../assets/Holstein.png";
 import Brown_Swiss from "../assets/Brown_Swiss.png";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CardComponent from "../common/CardComponent";
+import { useDebounce } from "../hooks/useDebounce";
 
 const cards = [
   { id: 1, color: "red", name: "Jersey", image: Jersey, type: "bulls" },
@@ -108,26 +109,41 @@ const CowFilter = () => {
   const [search, setSearch] = useState("");
   const [color, setColor] = useState("");
 
-  // const debounce = (fn, delay) => {
-  //   let timer;
-  //   return function (args) {
-  //     clearTimeout(timer);
-  //     timer = setTimeout(() => {
-  //       fn(...args);
-  //     }, delay);
-  //   };
-  // };
+  const debouncingData = useDebounce(search, 500);
 
   const filterData = useMemo(() => {
     return cards.filter((card) => {
       const matchSearch = card.name
         .toLowerCase()
-        .includes(search.toLowerCase());
+        .includes(debouncingData.toLowerCase());
       const matchTypes = type ? card.type === type : true;
       const matchColor = color ? card.color === color : true;
       return matchSearch && matchTypes && matchColor;
     });
-  }, [type, search, color]);
+  }, [type, debouncingData, color]);
+
+  const throttle = <T extends (...args: any[]) => void>(
+    fn: T,
+    delay: number,
+  ): ((...args: Parameters<T>) => void) => {
+    let lastCall = 0;
+
+    return (...args: Parameters<T>) => {
+      const now = Date.now();
+
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        fn(...args);
+      }
+    };
+  };
+
+  const handleTypeChange = useCallback(
+    throttle((value: string) => {
+      setType(value);
+    }, 1000),
+    [],
+  );
 
   return (
     <Container>
@@ -138,6 +154,7 @@ const CowFilter = () => {
             <Typography variant="subtitle1">Search Keyword</Typography>
             <TextField
               label="Search..."
+              value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </Grid>
@@ -151,6 +168,7 @@ const CowFilter = () => {
                 <TextField
                   {...params}
                   label="Colors..."
+                  value={color}
                   onChange={(e) => setColor(e.target.value)}
                 />
               )}
@@ -159,13 +177,22 @@ const CowFilter = () => {
         </Grid>
         <Grid size={{ xs: 8 }}>
           <Grid size={{ xs: 12 }} container spacing={2} sx={{ mt: 1 }}>
-            <Button variant="contained" onChange={() => setType("cows")}>
+            <Button
+              variant="contained"
+              onClick={() => handleTypeChange("cows")}
+            >
               Cows
             </Button>
-            <Button variant="contained" onChange={() => setType("cattles")}>
+            <Button
+              variant="contained"
+              onClick={() => handleTypeChange("cattles")}
+            >
               Cattles
             </Button>
-            <Button variant="contained" onChange={() => setType("bulls")}>
+            <Button
+              variant="contained"
+              onClick={() => handleTypeChange("bulls")}
+            >
               Bulls
             </Button>
           </Grid>
